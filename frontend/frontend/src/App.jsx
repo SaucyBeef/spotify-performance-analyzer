@@ -3,7 +3,7 @@ import "./App.css";
 import spotifySymbol from "./assets/spotify-symbol.png";
 import spotifyWaveform from "./assets/spotify-waveform.png";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "https://spotify-performance-analyzer.onrender.com/analyze";
+const API_BASE = import.meta.env.VITE_API_BASE || "https://spotify-performance-analyzer.onrender.com";
 
 const FEATURE_DETAILS = [
   {
