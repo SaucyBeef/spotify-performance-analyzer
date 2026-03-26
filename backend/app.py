@@ -4,6 +4,7 @@ from flask_cors import CORS
 from spotify_service import get_artist, get_top_tracks, build_track_dataset, get_spotify_token, filter_tracks_by_artist
 from analysis import analyze_tracks, FEATURE_COLUMNS
 from charts import plot_features
+import os
 
 
 app = Flask(__name__)
