@@ -10,7 +10,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-a
+
 @app.route("/analyze")
 def analyze():
     artist = request.args.get("artist")
