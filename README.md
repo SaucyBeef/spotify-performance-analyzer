@@ -3,7 +3,7 @@ Description: A web application that pulls a requested artists discography data a
 
 Thanks for taking a look at my repository!
 
-Requirements:
+Requirements/tips:
 
 1. Everything works as-is, but you will have to update the files to use your spotify api key. this is done by opening the '.env template' file in the backend and changing the respective fields, then renaming to '.env'.
 

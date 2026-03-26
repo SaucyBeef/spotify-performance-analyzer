@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from spotify_service import get_artist, get_top_tracks, build_track_dataset, get_spotify_token, filter_tracks_by_artist
-from analysis import analyze_tracks
+from analysis import analyze_tracks, FEATURE_COLUMNS
 from charts import plot_features
 
 
@@ -32,7 +32,7 @@ def analyze():
         reverse=True
     )
 
-    dataset = build_track_dataset(tracks)
+    dataset = build_track_dataset(tracks, token)
     dataset = sorted(
         dataset,
         key=lambda x: x.get("rb_popularity") or -1,
@@ -42,12 +42,17 @@ def analyze():
     analysis = analyze_tracks(dataset)
     plot_features(dataset)
 
+    per_feature_charts = {
+        feature: f"/static/feature_{feature}.png"
+        for feature in FEATURE_COLUMNS
+    }
+
     return jsonify({
         "tracks": dataset,
         "analysis": analysis,
         "charts": {
             "features": "/static/features.png",
-            "tempo": "/static/tempo.png"
+            "per_feature": per_feature_charts
         }
     })
 

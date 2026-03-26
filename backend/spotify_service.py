@@ -24,6 +24,11 @@ def _spotify_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
 
+def _spotify_get(token, url, error_label):
+    response = requests.get(url, headers=_spotify_headers(token))
+    return _parse_json_response(response, error_label)
+
+
 def _spotify_search(token, query, search_type, limit, offset=0):
     response = requests.get(
         "https://api.spotify.com/v1/search",
@@ -126,7 +131,19 @@ def get_audio_features(track_id):
     return data
 
 
-def build_track_dataset(tracks):
+def get_track_cover(track_id, token):
+    data = _spotify_get(token, f"https://api.spotify.com/v1/tracks/{track_id}", "TRACK COVER")
+    if not data:
+        return None
+
+    images = data.get("album", {}).get("images", [])
+    if not images:
+        return None
+
+    return images[0]["url"]
+
+
+def build_track_dataset(tracks, token=None):
     dataset = []
 
     for track in tracks:
@@ -144,16 +161,30 @@ def build_track_dataset(tracks):
         if not features:
             continue
 
+        cover_url = next(
+            (img["url"] for img in track.get("album", {}).get("images", []) if img.get("url")),
+            None
+        )
+        if not cover_url and token:
+            cover_url = get_track_cover(spotify_id, token)
+
         dataset.append({
+            # track data
             "track": track["name"],
             "artists": ", ".join([a["name"] for a in track["artists"]]),
-            "spotify_popularity": track.get("popularity", 0),  # Spotify’s value
-            "rb_popularity": rb_track.get("popularity"),       # ReccoBeat's value
+            "spotify_popularity": track.get("popularity"),
             "duration_ms": track["duration_ms"],
-            "danceability": features.get("danceability"),
-            "energy": features.get("energy"),
+            "rb_popularity": rb_track.get("popularity"),
+            "duration_min": track["duration_ms"] / 60000,
+            "cover": cover_url,
+
+            # track features
             "tempo": features.get("tempo"),
-            "acousticness": features.get("acousticness")
+            "instrumentalness": features.get("instrumentalness"),
+            "acousticness": features.get("acousticness"),
+            "energy": features.get("energy"),
+            "valence": features.get("valence"),
+            "danceability": features.get("danceability")
         })
 
     return dataset
