@@ -39,7 +39,7 @@ def _apply_dark_theme(ax, fig):
     ax.tick_params(colors=_DARK_TEXT)
     ax.grid(color=_DARK_GRID)
 
-
+sdf
 def _style_legend(ax):
     legend = ax.get_legend()
     if not legend:
